@@ -24,15 +24,15 @@ import os
     
 
 
-def get_dataset_stats(df, exclude=["commission_date","physical_safety_test","damaged","id"], round_digits=3):
-    # Get list of columns with 'object' datatype
-    # Exclude ETL columns
-    # Handle "exclude" columns differently to avoid internal errors.
-    exclude_columns = ['etl_proc_wid','w_insert_dt','w_update_dt',
-                       'effective_from_dt','effective_to_dt','current_flg',
-                       'delete_flg'] + exclude
+def get_dataset_stats(df, exclude=["excluded_col_1","excluded_col_2"], round_digits=3):
+    """
+    Get list of columns with 'object' datatype
+    Exclude ETL columns
+    Handle "exclude" columns differently to avoid internal errors.
+    """
+
     include_columns = list(df.columns)
-    for element in exclude_columns:
+    for element in exclude:
         if element in include_columns:
             include_columns.remove(element)
     
@@ -131,6 +131,7 @@ def get_dataset_stats(df, exclude=["commission_date","physical_safety_test","dam
 
 
 data_dir = "D:/Projects/Git Root/crash-data-analysis/data"
+output_dir = "D:/Projects/Git Root/crash-data-analysis/outputs"
 os.chdir(data_dir)
 os.getcwd()
 
@@ -140,17 +141,38 @@ df = pd.read_csv("Crash_Analysis_System_(CAS)_data.csv")
 ## Create statistics frame
 df_stats = get_dataset_stats(df)
 
-## Find all values for low-cardinality str columns and see if we can spot anomalies
-for col in df_stats[df_stats.type == 'str'][df_stats.ndistinct < 60].index.values.tolist():
-    print(col + ': ')
-    print('\t', end='') 
-    print(df[col].unique())
+## Find all values for low-cardinality str columns.
+## (a) Let's check whether the actual value ranges align with those declared in the MoT codebook. 
+##     Of special interest will be nulls, NaNs or obvious proxies for these.
+## (b) Some of these features may be candidates for one-hot-encoding if ML models are developed from this datset.
 
 
-# Possible values are 'Traffic Signals', 'Stop Sign', 'Give Way Sign', 'Pointsman', 'School Patrol', 'Nil' or ' N/A'.
 
 
-with pd.ExcelWriter('CAS_stats_20220408.xlsx') as writer:  
-    po.to_excel(writer, sheet_name='Pole')
-    pi.to_excel(writer, sheet_name='Pole Inspection')
-    vt.to_excel(writer, sheet_name='Vonaq Test')
+distinct_vals = pd.DataFrame(data=None, columns=['Variable', 'Value','Count'])
+cardinality_thrsld = 60
+for col in df_stats[df_stats.type == 'str'][df_stats.ndistinct < cardinality_thrsld].index.values.tolist():
+    for val in df[col].unique():
+        if pd.isna(val):
+            count = len(df[df[col].isnull()]) # Count the occurrence of NaN values if applicable within this column
+        else:
+            count = len(df[df[col] == val]) # Count the occurrence of this value within this column
+        # Append to dataframe
+        distinct_vals.loc[len(distinct_vals)] = [col, val, count]
+
+
+
+## Switch working directory to /outputs
+os.chdir(output_dir)
+
+
+with pd.ExcelWriter('CAS_stats_20220409.xlsx') as writer:  
+    df_stats.to_excel(writer, sheet_name='Column stats for CAS data')
+    distinct_vals.to_excel(writer, sheet_name='Distinct vals')
+
+
+
+len(df[df['crashSHDescription'].isnull()])
+
+df.crashSHDescription.unique()
+pd.isna(val)
