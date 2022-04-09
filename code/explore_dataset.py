@@ -170,9 +170,4 @@ with pd.ExcelWriter('CAS_stats_20220409.xlsx') as writer:
     df_stats.to_excel(writer, sheet_name='Column stats for CAS data')
     distinct_vals.to_excel(writer, sheet_name='Distinct vals')
 
-
-
-len(df[df['crashSHDescription'].isnull()])
-
-df.crashSHDescription.unique()
-pd.isna(val)
+# Let's 
