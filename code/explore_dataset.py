@@ -12,7 +12,7 @@ import os
 # import pickle
 # import xlswriter
 
-
+import seaborn as sns
 
 
 ###################################################
@@ -170,4 +170,12 @@ with pd.ExcelWriter('CAS_stats_20220409.xlsx') as writer:
     df_stats.to_excel(writer, sheet_name='Column stats for CAS data')
     distinct_vals.to_excel(writer, sheet_name='Distinct vals')
 
-# Let's 
+# Let's see a basic distribution of all crashs over all covered years by severity.
+
+df.plot('crashYear', 'minorInjuryCount')
+
+
+# Let's break this down by region (excluding cases where the Region is not known)
+
+
+# Lest's break this down by 
