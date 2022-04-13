@@ -1,0 +1,31 @@
+Model predicting Injury Crash versu Non-Injury Crash
+
+                  precision    recall  f1-score   support
+
+    Injury Crash       0.47      0.68      0.56     75790
+Non-Injury Crash       0.83      0.68      0.75    180580
+
+        accuracy                           0.68    256370
+       macro avg       0.65      0.68      0.65    256370
+    weighted avg       0.73      0.68      0.69    256370
+
+
+Feature ranking:
+---------------
+1. pedestrian	(0.219002)
+2. bicycle	(0.174812)
+3. motorcycle	(0.174764)
+4. speedLimit	(0.170368)
+5. moped	(0.054799)
+6. roadLane_1-way	(0.030085)
+7. parkedVehicle	(0.029615)
+8. carStationWagon	(0.029001)
+9. crashYear	(0.023797)
+10. tree	(0.014854)
+11. weatherA_Null	(0.013879)
+12. NumberOfLanes	(0.012381)
+13. cliffBank	(0.010850)
+14. postOrPole	(0.005990)
+15. debris	(0.004723)
+16. region_Canterbury Region	(0.003664)
+17. donkey	(0.003055)
